@@ -100,10 +100,10 @@ function Home() {
           justifyContent: 'center',
           textAlign: 'center',
           padding: '40px', // Added padding for more space
-          background: "#101010", // Set a white background for the container
+           // Set a white background for the container
           borderRadius: '10px', // Added rounded corners
           opacity: '0.9',
-          color: 'white' // Added a slight opacity for better visibility
+           // Added a slight opacity for better visibility
         }}
       >
         <div style={{ marginBottom: '20px' }}>
@@ -117,23 +117,25 @@ function Home() {
 
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
           <Box
-            sx={{
+            style={{
               width: 500,
               maxWidth: '100%',
              borderRadius: '30px',
-             backgroundColor: 'transparent',
-                border: '1px solid white', // Added border style
-                color: 'white'
+             background: 'transparent',
+            border: '1px solid white', // Added border style
+            color: 'white'
             }}
           >
             <TextField
               fullWidth
               placeholder='enter youtube video link'
               id="fullWidth"
-              sx={{
+              style={{
+                color:'white',
+                background: 'transparent',
                 borderRadius: '30px',
-                color:"white"
               }}
+              inputProps={{ style: { color: 'white' } }}
               onChange={(e)=>setVideoLink(e.target.value)}
             />
           </Box>
