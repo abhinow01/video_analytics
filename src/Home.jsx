@@ -1,8 +1,8 @@
 import { Container, Typography, Button } from '@mui/material';
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useLocation} from 'react-router-dom';
 import './styles.css';
 import ResultPage from './ResultPage';
 import axios from 'axios';
@@ -15,61 +15,63 @@ function Home() {
   const [videoData,setVideoData] = useState(null);
  const [loading,setLoading] = useState(false);
  const navigate = useNavigate();
+ const location = useLocation();
+
  const apiKey = import.meta.env.VITE_REACT_APP_YOUTUBE_API_KEY;
 
-
+ const getVideoId = (link)=>{
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = link.match(regex);
+  return match ? match[1] : null;
+};
  const handleGetAnalytics = async  ()=>{
     setLoading(true);
     try {
-        await fetchVideoData(); // Call fetchVideoData here
-    
-        setTimeout(() => {
+      const videoId = getVideoId(videoLink);
+        
+        if (!videoId) {
+          console.log("Error: invalid id!");
           setLoading(false);
-          navigate('/result');
-        }, 2000);
+          return;
+        }
+        const response = await axios.get(
+          `https://www.googleapis.com/youtube/v3/videos`,
+          {
+            params: {
+              part: 'snippet,statistics',
+              id: videoId,
+              key: "AIzaSyCwWw-zrVAzNfc-wqbk96UiwYLw32PonJM" // apiKey
+            }
+          }
+        );
+        const data = response.data.items[0];
+          console.log(data);
+          setVideoData(data);
+
+          const earnings = calculateEarnings(data);
+         
+          navigate('/result', { state: { videoData: data, earnings } });
       } catch (error) {
         console.error('Error fetching video data:', error);
         setLoading(false);
       }
 };
-  const getVideoId = (link)=>{
-    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-    const match = link.match(regex);
-    return match ? match[1] : null;
-  };
+  
 
-  const fetchVideoData = async ()=>{
-    try{
-        const videoId = getVideoId(videoLink);
-        if(!videoId){
-            console.log("Error: invalid id!");
-            return;
-        }
-        const response = await axios.get(
-            `https://www.googleapis.com/youtube/v3/videos`,
-        {
-        params : {
-            part: 'snippet,statistics',
-            id: videoId,
-            key: "AIzaSyCwWw-zrVAzNfc-wqbk96UiwYLw32PonJM"        // apiKey
-        }
-    });
-    const data = response.data.items[0];
-    console.log(data);
-      setVideoData(data);
-    }catch (error) {
-        console.error('Error fetching video data:', error);
-      }
-  };
+  useEffect(() => {
+    console.log(videoData);
+  }, [videoData]);
+  
 
+ 
   const calculateEarnings = (videoData) => {
     if (videoData) {
       const subscriberCount = videoData.statistics.subscriberCount || 0;
       const views = videoData.statistics.viewCount || 0;
       const comments = videoData.statistics.commentCount || 0;
       const likes = videoData.statistics.likeCount || 0;
-
-      return Math.min(subscriberCount, views) + 10 * comments + 5 * likes;
+      let vidEarnings =  Math.min(subscriberCount, views) + 10 * comments + 5 * likes;
+      return vidEarnings;
     }
 
     return 0;
@@ -85,8 +87,8 @@ function Home() {
           left: '20px',
           zIndex: '9999',
           width: '100%',
-          height: '35px', // Adjusted height
-         // Added margin at the bottom
+          height: '35px',
+         
         }}
       >
         <img src='/assets/anchorlogo.png'  />
@@ -99,11 +101,10 @@ function Home() {
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          padding: '40px', // Added padding for more space
-           // Set a white background for the container
-          borderRadius: '10px', // Added rounded corners
+          padding: '40px', 
+          borderRadius: '10px', 
           opacity: '0.9',
-           // Added a slight opacity for better visibility
+        
         }}
       >
         <div style={{ marginBottom: '20px' }}>
@@ -122,7 +123,7 @@ function Home() {
               maxWidth: '100%',
              borderRadius: '30px',
              background: 'transparent',
-            border: '1px solid white', // Added border style
+            border: '1px solid white', 
             color: 'white'
             }}
           >
@@ -156,12 +157,9 @@ function Home() {
           
         </div>
       </Container>
-      {videoData && (
-  <ResultPage
-    videoData={videoData}
-    earnings={calculateEarnings(videoData)}
-  />
-)}
+      {location.state && (
+        <ResultPage />
+      )}
     </div>
   );
     

@@ -9,22 +9,28 @@ function ResultCard ({videoData, earnings}) {
     const comments = videoData.statistics.commentCount;  
 
     return (
-        <Card sx={{ maxWidth: 345, margin: '10px', display: 'flex' }}>
+        <Card sx={{ maxWidth:700, margin: '10px', display: 'flex' }}>
             <CardMedia
                 component="img"
-                height="140"
+                style={{height:"50",
+                width:"50"}}
                 image={thumbnailUrl}
                 alt={title}
             />
             <CardContent style={{ flex: 1 }}>
-                <Typography variant="subtitle1" component="div">
-                    <strong>{title}</strong>
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                    <div>Views: {views}</div>
-                    <div>Likes: {likes}</div>
-                    <div>Comments: {comments}</div>
-                </Typography>
+            <Typography variant="subtitle1" component="div">
+            <strong>{title}</strong>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+            Views: {views}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+            Likes: {likes}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+            Comments: {comments}
+            </Typography>
+
             </CardContent>
             <CardContent style={{ flex: 2, textAlign: 'center', height: '100%' }}>
                 <Typography variant="h4" component="div">
