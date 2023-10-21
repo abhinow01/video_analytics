@@ -6,6 +6,7 @@ import { useNavigate ,useLocation} from 'react-router-dom';
 import './styles.css';
 import ResultPage from './ResultPage';
 import axios from 'axios';
+import './index.css'
 
 
 
@@ -155,11 +156,23 @@ function Home() {
             <Typography variant='caption'>Click here</Typography>
           </Button>
           
+          
         </div>
       </Container>
       {location.state && (
         <ResultPage />
       )}
+
+  <div style={{
+            position: 'fixed',
+            bottom: 0,
+            right: 0,
+            margin: '10px',
+            display: 'flex',
+            zIndex: 9999 
+          }}> 
+           <img src='./assets/playimg.png'/>
+          </div>
     </div>
   );
     
